@@ -8,7 +8,7 @@ int exp_modular(int n, int k, int m) {
     int aux = exp_modular(n, k/2, m) % m;
     if (k%2 == 0) return (aux*aux) % m;
     else return (((aux*aux) % m) * n) % m;
-    }
+  }
 }
 int main() {
     int n,k,m;
