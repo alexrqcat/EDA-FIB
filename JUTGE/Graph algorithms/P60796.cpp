@@ -6,44 +6,46 @@ using namespace std;
 
 typedef  vector<vector<char>> Graph;
 
+void llegir_graf(int files, int cols, Graph& G){
+  char a;
+  for(int i = 0; i < files; ++i){
+    for(int j = 0; j < cols ; ++j){
+      cin >> a;
+      G[i][j] = a;
+    }
+  }
+}
+
 int distancia_tresor(int fila, int col, const Graph& G){
   queue<pair<int,int>> Q;
-  vector<vector<int>> dis(fila+1, vector<int> (col+1,-1));
-  int dist = 0;
   Q.push(make_pair(fila,col));
-  while(not Q.empty()){
-    pair<int,int> pos = Q.front();
-    Q.pop();
+  vector<vector<int>> distancies (G.size(), vector<int>(G[0].size(),-1));
+  distancies[fila][col] = 0;
+  while(!Q.empty()){
     int f,c;
-    f = pos.first;
-    c = pos.second;
-    dist = dis[f][c];
-    cerr << "xivato1" << endl;
-    if(f < fila and dis[f+1][c] == -1 and G[f+1][c] != 'X'){
-      if(G[f+1][c] == 't') return dist;
+    f = Q.front().first;
+    c = Q.front().second;
+    Q.pop();
+    if(f < G.size()-1 and distancies[f+1][c] == -1 and G[f+1][c] != 'X'){
+      distancies[f+1][c] = distancies[f][c]+1;
+      if(G[f+1][c] == 't') return distancies[f+1][c];
       Q.push(make_pair(f+1,c));
-      dis[f+1][c] = ++dist;
-      cerr << "xivato2" << endl;
     }
-    else if(f > 0 and dis[f-1][c] == -1 and G[f-1][c] != 'X'){
-      if(G[f-1][c] == 't') return dist;
+    if(f > 0 and distancies[f-1][c] == -1 and G[f-1][c] != 'X'){
+      distancies[f-1][c] = distancies[f][c]+1;
+      if(G[f-1][c] == 't') return distancies[f-1][c];
       Q.push(make_pair(f-1,c));
-      dis[f-1][c] = ++dist;
-      cerr << "xivato3" << endl;
     }
-    else if(c > 0 and dis[f][c-1] == -1 and G[f][c-1] != 'X'){
-      if(G[f][c-1] == 't') return dist;
+    if(c > 0 and distancies[f][c-1] == -1 and G[f][c-1] != 'X'){
+      distancies[f][c-1] = distancies[f][c]+1;
+      if(G[f][c-1] == 't') return distancies[f][c-1];
       Q.push(make_pair(f,c-1));
-      dis[f][c-1] = ++dist;
-      cerr << "xivato4" << endl;
     }
-    else if(c < col and dis[f][c+1] == -1 and G[f][c+1] != 'X'){
-      if(G[f][c+1] == 't') return dist;
+    if(c < G[0].size()-1 and distancies[f][c+1] == -1 and G[f][c+1] != 'X'){
+      distancies[f][c+1] = distancies[f][c]+1;
+      if(G[f][c+1] == 't') return distancies[f][c+1];
       Q.push(make_pair(f,c+1));
-      dis[f][c+1] = ++dist;
-      cerr << "xivato5" << endl;
     }
-    cerr << "xivato6" << endl;
   }
   return -1;
 }
@@ -51,15 +53,13 @@ int distancia_tresor(int fila, int col, const Graph& G){
 int main(){
   int n, m;
   cin >> n >> m;
-  char a;
   Graph mapa(n,vector<char>(m));
-  for(int i = 0; i < n; ++i){
-    for(int j = 0; j < m ; ++j){
-      cin >> a;
-      mapa[i][j] = a;
-    }
-  }
+  llegir_graf(n,m,mapa);
   int f,c;
   cin >> f >> c;
-  cout << distancia_tresor(f-1,c-1,mapa) << endl;
+  int dist = distancia_tresor(f-1,c-1,mapa);
+  if (dist != -1) cout <<"distancia minima: " <<  dist << endl;
+  else cout << "no es pot arribar a cap tresor" << endl;
 }
+
+//Àlex Rubio i Quintana
